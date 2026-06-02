@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jay Trivedi — AI ML Researcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f9f7;
+      --fg: #0d0d0d;
+      --mid: #777;
+      --border: #ddd;
+      --mono: 'Space Mono', monospace;
+      --body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--body);
+      overflow-x: hidden;
+    }
+
+    /* ── Progress bar ── */
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 2px; width: 0%;
+      background: var(--fg);
+      z-index: 300;
+      transition: width 0.08s linear;
+    }
+
+    /* ── Nav ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 22px max(32px,6vw);
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 200;
+      background: rgba(249,249,247,0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    #nav.scrolled { border-color: var(--border); }
+
+    .nav-logo {
+      font-family: var(--mono); font-size: 13px; font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono); font-size: 10px; text-decoration: none;
+      color: var(--fg); letter-spacing: 0.14em; text-transform: uppercase;
+      opacity: 0.45; transition: opacity 0.2s;
+    }
+    .nav-links a:hover { opacity: 1; }
+
+    /* ── HERO ── */
+    #hero {
+      height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      background: var(--bg);
+    }
+
+    /* pixel grid overlay on hero */
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+      background-size: 10px 10px;
+      pointer-events: none;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px; background: var(--fg);
+    }
+
+    .hero-text {
+      text-align: center; margin-top: 0;
+      position: relative; z-index: 2;
+    }
+    .hero-text h1 {
+      font-family: var(--mono); font-size: clamp(40px,8vw,104px);
+      font-weight: 700; letter-spacing: -0.05em; line-height: 0.98;
+    }
+    .hero-role {
+      font-family: var(--body); font-size: clamp(13px,1.4vw,18px);
+      font-weight: 300; color: var(--mid);
+      margin-top: 22px; letter-spacing: 0.22em; text-transform: uppercase;
+    }
+
+    .scroll-cue {
+      position: absolute; bottom: 30px;
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--mid);
+      animation: nudge 2.5s ease-in-out infinite;
+    }
+    @keyframes nudge {
+      0%,100% { transform: translateY(0); opacity: 0.4; }
+      50%      { transform: translateY(7px); opacity: 1; }
+    }
+
+    /* ── Sections ── */
+    .sec {
+      padding: 96px max(36px,7vw);
+      border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .sec.in { opacity: 1; transform: translateY(0); }
+
+    .sec-num {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid);
+      margin-bottom: 18px;
+    }
+    .sec-title {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(36px,5.5vw,80px); letter-spacing: -0.05em;
+      line-height: 0.92; margin-bottom: 56px;
+    }
+
+    /* ── About ── */
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 48px; max-width: 920px;
+    }
+    .about-grid p {
+      font-size: 16px; line-height: 1.78; color: #3a3a3a; font-weight: 300;
+      text-wrap: pretty;
+    }
+
+    /* ── Skills ── */
+    .skills-table { border-top: 1px solid var(--fg); }
+    .skill-row {
+      display: grid; grid-template-columns: 190px 1fr;
+      gap: 32px; align-items: start;
+      padding: 22px 0; border-bottom: 1px solid var(--border);
+    }
+    .skill-cat {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--mid);
+      padding-top: 4px;
+    }
+    .skill-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      font-family: var(--mono); font-size: 11px;
+      padding: 5px 12px; border: 1px solid var(--fg);
+      letter-spacing: 0.02em; cursor: default;
+      transition: background 0.15s, color 0.15s;
+    }
+    .chip:hover { background: var(--fg); color: var(--bg); }
+
+    /* ── Publication ── */
+    .pub {
+      border-top: 1px solid var(--fg);
+      border-bottom: 1px solid var(--fg);
+      display: grid; grid-template-columns: 52px 1fr; gap: 28px;
+      padding: 44px 0;
+    }
+    .pub-n { font-family: var(--mono); font-size: 10px; color: var(--mid); padding-top: 7px; letter-spacing: 0.05em; }
+    .pub-venue {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--mid); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .pub-status {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+      padding: 3px 9px; border: 1px solid var(--fg); color: var(--fg);
+    }
+    .pub-title {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(18px,2.4vw,30px); letter-spacing: -0.03em;
+      line-height: 1.15; margin-bottom: 16px; text-wrap: pretty;
+    }
+    .pub-authors { font-size: 14px; font-weight: 400; color: #2e2e2e; margin-bottom: 20px; }
+    .pub-authors strong { font-weight: 600; }
+    .pub-abstract { font-size: 15px; line-height: 1.72; color: #444; font-weight: 300; max-width: 720px; text-wrap: pretty; }
+    .pub-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 20px; }
+    .pub-tags .tag {
+      font-family: var(--mono); font-size: 10px;
+      padding: 3px 9px; background: var(--fg); color: var(--bg); letter-spacing: 0.05em;
+    }
+
+    /* ── Projects ── */
+    .projects-list { border-top: 1px solid var(--fg); }
+    .proj {
+      display: grid; grid-template-columns: 52px 1fr;
+      gap: 28px; align-items: start;
+      padding: 44px 0; border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .proj:last-child { border-bottom: 1px solid var(--fg); }
+    .proj:hover { background: rgba(0,0,0,0.02); }
+
+    a.proj-title-link { text-decoration: none; color: inherit; }
+    a.proj-title-link:hover .proj-title { text-decoration: underline; text-underline-offset: 4px; }
+    .proj-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; text-decoration: none; color: var(--fg);
+      margin-top: 18px; border-bottom: 1px solid var(--fg); padding-bottom: 3px;
+      transition: gap 0.2s;
+    }
+    .proj-cta:hover { gap: 14px; }
+
+    .proj-n {
+      font-family: var(--mono); font-size: 10px; color: var(--mid);
+      padding-top: 7px; letter-spacing: 0.05em;
+    }
+    .proj-title {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(17px,2.2vw,28px);
+      letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 14px;
+    }
+    .proj-desc {
+      font-size: 15px; line-height: 1.72; color: #444;
+      font-weight: 300; max-width: 640px; margin-bottom: 18px;
+      text-wrap: pretty;
+    }
+    .proj-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tag {
+      font-family: var(--mono); font-size: 10px;
+      padding: 3px 9px; background: var(--fg); color: var(--bg);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Contact ── */
+    #contact {
+      padding: 96px max(36px,7vw);
+      min-height: 55vh; display: flex; flex-direction: column;
+      justify-content: center;
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    #contact.in { opacity: 1; transform: translateY(0); }
+
+    .contact-big {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(32px,5.5vw,80px);
+      letter-spacing: -0.05em; line-height: 0.95; margin-bottom: 52px;
+    }
+    .contact-links { display: flex; gap: 36px; flex-wrap: wrap; }
+    .clink {
+      font-family: var(--mono); font-size: 13px;
+      color: var(--fg); text-decoration: none;
+      letter-spacing: 0.04em; position: relative; padding-bottom: 2px;
+    }
+    button.clink {
+      background: none; border: none; cursor: pointer;
+      padding: 0 0 2px; line-height: inherit;
+    }
+    .copy-email::before {
+      content: 'copied ✓';
+      position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--mid);
+      opacity: 0; transition: opacity 0.2s; pointer-events: none; white-space: nowrap;
+    }
+    .copy-email.copied::before { opacity: 1; }
+    .clink::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 1px; background: var(--fg);
+      transform: scaleX(0); transition: transform 0.25s;
+      transform-origin: left;
+    }
+    .clink:hover::after { transform: scaleX(1); }
+
+    /* ── Footer ── */
+    footer {
+      padding: 24px max(36px,7vw);
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 9px;
+      color: var(--mid); letter-spacing: 0.12em;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .about-grid { grid-template-columns: 1fr; gap: 24px; }
+      .skill-row { grid-template-columns: 1fr; gap: 10px; }
+      .proj { grid-template-columns: 36px 1fr; }
+      #nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav id="nav">
+  <div class="nav-logo">J.U.T.</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#publication">Publication</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-text">
+    <h1>Jay Ullaskumar<br>Trivedi</h1>
+    <p class="hero-role">AI &nbsp;·&nbsp; ML Researcher &nbsp;·&nbsp; M.Tech</p>
+  </div>
+  <div class="scroll-cue">scroll ↓</div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about" class="sec">
+  <div class="sec-num">01 — About</div>
+  <div class="sec-title">Who<br>I Am</div>
+  <div class="about-grid">
+    <p>Research-focused M.Tech student in Artificial Intelligence with a strong foundation in Computer Engineering, specializing in machine learning, deep learning, and reinforcement learning.</p>
+    <p>Experienced in designing novel architectures for autonomous systems, AI models for audio classification and time-series forecasting. Proficient in Python with hands-on experience in PyTorch, TensorFlow, and CUDA — building and optimizing models for real-world applications.</p>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills" class="sec">
+  <div class="sec-num">02 — Skills</div>
+  <div class="sec-title">Expertise</div>
+  <div class="skills-table">
+    <div class="skill-row">
+      <div class="skill-cat">Languages</div>
+      <div class="skill-chips">
+        <span class="chip">Python</span>
+        <span class="chip">PHP Laravel</span>
+      </div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-cat">Domains</div>
+      <div class="skill-chips">
+        <span class="chip">Machine Learning</span>
+        <span class="chip">Deep Learning</span>
+        <span class="chip">Reinforcement Learning</span>
+        <span class="chip">Computer Vision</span>
+        <span class="chip">Audio Classification</span>
+      </div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-cat">Frameworks</div>
+      <div class="skill-chips">
+        <span class="chip">PyTorch</span>
+        <span class="chip">TensorFlow</span>
+        <span class="chip">NumPy</span>
+        <span class="chip">Pandas</span>
+        <span class="chip">Matplotlib</span>
+        <span class="chip">Stable-Baselines3</span>
+        <span class="chip">CUDA</span>
+      </div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-cat">Simulator</div>
+      <div class="skill-chips">
+        <span class="chip">MetaDrive</span>
+      </div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-cat">Specialized</div>
+      <div class="skill-chips">
+        <span class="chip">Autonomous Driving</span>
+        <span class="chip">Bioacoustic AI</span>
+        <span class="chip">Time Series Forecasting</span>
+        <span class="chip">Real-Time Inference</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PUBLICATION ── -->
+<section id="publication" class="sec">
+  <div class="sec-num">03 — Publication</div>
+  <div class="sec-title">Research</div>
+  <div class="pub">
+    <div class="pub-n">01</div>
+    <div>
+      <div class="pub-venue">
+        <span>IEEE SoftCOM 2026</span>
+        <span class="pub-status">Under Review</span>
+      </div>
+      <div class="pub-title">Hierarchical Deep Reinforcement Learning for S-Curve Trajectory Control and Goal-based Decision Making in Autonomous Driving</div>
+      <p class="pub-authors"><strong>Jay Trivedi</strong> and <strong>Dr. Nitin Singh Rajput</strong> (2026). Submitted to IEEE 34th International Conference on Software, Telecommunications, and Computer Networks (SoftCOM 2026).</p>
+      <p class="pub-abstract">Developed an autonomous driving system based on a reinforcement learning-driven heterogeneous hierarchical architecture, enabling efficient goal-based decision-making and control. The framework separates high-level strategic planning from low-level motion execution, allowing scalable and modular learning. Integrated sensor-based perception inputs to support real-time environment understanding, adaptive navigation, and lane management. Trained and evaluated in a simulated environment with a focus on improving stability, sample efficiency, and robustness of learned policies.</p>
+      <div class="pub-tags">
+        <span class="tag">Reinforcement Learning</span>
+        <span class="tag">Hierarchical RL</span>
+        <span class="tag">Autonomous Driving</span>
+        <span class="tag">PyTorch</span>
+        <span class="tag">Python</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROJECTS ── -->
+<section id="projects" class="sec">
+  <div class="sec-num">04 — Projects</div>
+  <div class="sec-title">Work</div>
+  <div class="projects-list">
+    <div class="proj">
+      <div class="proj-n">01</div>
+      <div>
+        <a class="proj-title-link" href="projects/customer-support.html">
+          <div class="proj-title">Customer Support<br>Ticket Analysis</div>
+        </a>
+        <p class="proj-desc">NLP-based system for ticket classification, priority prediction, and summarization using TF-IDF features. Implemented Logistic Regression and SVM with comparative evaluation — Logistic Regression achieved superior performance across standard metrics.</p>
+        <div class="proj-tags">
+          <span class="tag">NLP</span>
+          <span class="tag">TF-IDF</span>
+          <span class="tag">SVM</span>
+          <span class="tag">Logistic Regression</span>
+          <span class="tag">Python</span>
+        </div>
+        <a class="proj-cta" href="projects/customer-support.html">View README ↗</a>
+      </div>
+    </div>
+    <div class="proj">
+      <div class="proj-n">02</div>
+      <div>
+        <div class="proj-title">Live Bird Species<br>Recognition System</div>
+        <p class="proj-desc">Real-time bioacoustic AI system classifying 10 bird species from audio signals. Processed 5,548 recordings into log-mel spectrograms with noise filtering and segmentation. Designed a 4-layer CNN in PyTorch with batch normalization and dropout for stable, efficient training.</p>
+        <div class="proj-tags">
+          <span class="tag">PyTorch</span>
+          <span class="tag">CNN</span>
+          <span class="tag">Log-Mel Spectrograms</span>
+          <span class="tag">Bioacoustics</span>
+          <span class="tag">Real-Time</span>
+        </div>
+      </div>
+    </div>
+    <div class="proj">
+      <div class="proj-n">03</div>
+      <div>
+        <a class="proj-title-link" href="projects/air-quality.html">
+          <div class="proj-title">Air Quality Prediction<br>using LSTM &amp; Regression</div>
+        </a>
+        <p class="proj-desc">Multi-pollutant forecasting for AQI, PM2.5, PM10, NO₂, SO₂, CO, and O₃ using CPCB data. Compared LSTM and Linear Regression to capture temporal dynamics and baseline trends, with preprocessing, normalization, and feature engineering on time-series data.</p>
+        <div class="proj-tags">
+          <span class="tag">LSTM</span>
+          <span class="tag">Time Series</span>
+          <span class="tag">CPCB Data</span>
+          <span class="tag">Feature Engineering</span>
+          <span class="tag">PyTorch</span>
+        </div>
+        <a class="proj-cta" href="projects/air-quality.html">View README ↗</a>
+      </div>
+    </div>
+    <div class="proj">
+      <div class="proj-n">04</div>
+      <div>
+        <a class="proj-title-link" href="projects/supervisor-app.html">
+          <div class="proj-title">Supervisor Management<br>Application</div>
+        </a>
+        <p class="proj-desc">A Django web application that gives professors and volunteers information about ongoing exams for supervision. They can accept or reject supervision requests with a logical reason — simplifying a long manual process. Admins broadcast requests; the first to accept claims the duty.</p>
+        <div class="proj-tags">
+          <span class="tag">Django</span>
+          <span class="tag">Python</span>
+          <span class="tag">Bootstrap</span>
+          <span class="tag">SQLite</span>
+          <span class="tag">Web App</span>
+        </div>
+        <a class="proj-cta" href="projects/supervisor-app.html">View README ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="sec-num">05 — Contact</div>
+  <div class="contact-big">Let's build<br>something<br>intelligent.</div>
+  <div class="contact-links">
+    <button class="clink copy-email" type="button" data-email="jayutrivedi106@gmail.com">jayutrivedi106@gmail.com</button>
+    <button class="clink copy-email" type="button" data-email="jayutrivedi1061@gmail.com">jayutrivedi1061@gmail.com</button>
+    <a class="clink" href="https://github.com/JayUT10" target="_blank" rel="noopener">GitHub ↗</a>
+    <a class="clink" href="https://www.linkedin.com/in/jay-trivedi-31a61a2b4" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Jay Ullaskumar Trivedi</span>
+  <span>AI ML Researcher · M.Tech AI</span>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// SCROLL — progress bar + nav border
+// ═══════════════════════════════════════════════
+window.addEventListener('scroll', () => {
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  const ratio = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+  document.getElementById('progress').style.width = (ratio * 100) + '%';
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 30);
+});
+
+// ═══════════════════════════════════════════════
+// SECTION REVEAL on scroll
+// ═══════════════════════════════════════════════
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.sec, #contact').forEach(el => io.observe(el));
+
+// ═══════════════════════════════════════════════
+// CLICK-TO-COPY EMAILS
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.copy-email').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const email = btn.dataset.email;
+    const done = () => {
+      btn.classList.add('copied');
+      setTimeout(() => btn.classList.remove('copied'), 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done).catch(() => {
+        fallbackCopy(email); done();
+      });
+    } else {
+      fallbackCopy(email); done();
+    }
+  });
+});
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>

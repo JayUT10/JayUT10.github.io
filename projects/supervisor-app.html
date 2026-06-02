@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supervisor Management Application — Jay Trivedi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f9f7;
+      --fg: #0d0d0d;
+      --mid: #777;
+      --border: #ddd;
+      --mono: 'Space Mono', monospace;
+      --body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--fg); font-family: var(--body); line-height: 1.65; }
+
+    #progress {
+      position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+      background: var(--fg); z-index: 300; transition: width 0.08s linear;
+    }
+
+    #bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 18px max(28px,5vw);
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 200; background: rgba(249,249,247,0.9);
+      backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+    }
+    .back {
+      font-family: var(--mono); font-size: 11px; text-decoration: none;
+      color: var(--fg); letter-spacing: 0.08em;
+      display: inline-flex; align-items: center; gap: 8px; transition: gap 0.2s;
+    }
+    .back:hover { gap: 14px; }
+    .bar-repo {
+      font-family: var(--mono); font-size: 10px; text-decoration: none;
+      color: var(--fg); letter-spacing: 0.1em; text-transform: uppercase;
+      border: 1px solid var(--fg); padding: 7px 13px;
+      transition: background 0.18s, color 0.18s;
+    }
+    .bar-repo:hover { background: var(--fg); color: var(--bg); }
+
+    main { max-width: 920px; margin: 0 auto; padding: 130px max(28px,5vw) 120px; }
+
+    .eyebrow {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid); margin-bottom: 20px;
+    }
+    h1.title {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(32px,5.4vw,60px); letter-spacing: -0.045em;
+      line-height: 1.04; margin-bottom: 24px;
+    }
+    .lead {
+      font-size: clamp(16px,2vw,20px); font-weight: 300;
+      color: #2e2e2e; max-width: 680px; text-wrap: pretty; margin-bottom: 36px;
+    }
+    .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 52px; }
+    .meta-chips .chip {
+      font-family: var(--mono); font-size: 11px;
+      padding: 5px 12px; border: 1px solid var(--fg); letter-spacing: 0.02em;
+    }
+
+    hr.rule { border: none; border-top: 1px solid var(--fg); margin: 64px 0 0; }
+
+    section.block { padding-top: 52px; }
+
+    h2 {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(22px,3vw,34px); letter-spacing: -0.03em;
+      margin-bottom: 8px; display: flex; align-items: baseline; gap: 14px;
+    }
+    h2 .n { font-size: 13px; color: var(--mid); font-weight: 400; letter-spacing: 0; }
+    h3 {
+      font-family: var(--mono); font-weight: 700; font-size: 15px;
+      letter-spacing: 0.02em; margin: 34px 0 14px; text-transform: uppercase;
+    }
+    h4 {
+      font-family: var(--mono); font-weight: 700; font-size: 12px;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid);
+      margin: 28px 0 12px;
+    }
+    p { margin: 14px 0; font-weight: 300; color: #2e2e2e; text-wrap: pretty; }
+    p.section-intro { font-size: 16px; margin-top: 14px; }
+
+    code {
+      font-family: var(--mono); font-size: 0.86em;
+      background: #ececea; padding: 2px 6px; border-radius: 2px;
+    }
+    strong { font-weight: 500; color: var(--fg); }
+
+    .table-wrap { overflow-x: auto; margin: 20px 0; border: 1px solid var(--border); }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 460px; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    th {
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--fg); color: var(--bg); white-space: nowrap;
+    }
+    td { font-weight: 300; color: #2e2e2e; }
+    td:first-child { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(0,0,0,0.025); }
+
+    blockquote {
+      border-left: 2px solid var(--fg); padding: 4px 0 4px 18px; margin: 18px 0;
+      font-size: 14px; color: #444; font-style: italic;
+    }
+
+    pre {
+      background: #14140f; color: #e8e8e2;
+      font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+      padding: 22px 24px; overflow-x: auto; margin: 20px 0; border-radius: 3px;
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+    .two-col h3 { margin-top: 0; }
+
+    ol, ul.plain { margin: 14px 0 14px 20px; font-weight: 300; color: #2e2e2e; }
+    ol li, ul.plain li { margin: 8px 0; padding-left: 6px; }
+
+    /* Tutorial walkthrough */
+    .step {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+      align-items: center; padding: 44px 0; border-bottom: 1px solid var(--border);
+    }
+    .step:nth-child(even) .step-text { order: 2; }
+    .step-num {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em;
+      color: var(--mid); text-transform: uppercase; margin-bottom: 10px;
+    }
+    .step-title {
+      font-family: var(--mono); font-weight: 700; font-size: 19px;
+      letter-spacing: -0.02em; margin-bottom: 12px;
+    }
+    .step-text p { margin: 0 0 12px; font-size: 14px; }
+    .step-text ul { margin: 10px 0 0 18px; font-size: 13px; font-weight: 300; color: #444; }
+    .step-text ul li { margin: 5px 0; }
+    .step-shot { margin: 0; border: 1px solid var(--border); background: #fff; }
+    .step-shot img { display: block; width: 100%; height: auto; }
+    .step-shot figcaption {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--mid);
+      padding: 8px 12px; border-top: 1px solid var(--border);
+    }
+
+    footer {
+      border-top: 1px solid var(--fg); padding: 28px max(28px,5vw);
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 10px; color: var(--mid);
+      letter-spacing: 0.1em; flex-wrap: wrap; gap: 12px;
+    }
+    footer a { color: var(--fg); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 700px) {
+      .two-col { grid-template-columns: 1fr; gap: 12px; }
+      .step { grid-template-columns: 1fr; gap: 16px; }
+      .step:nth-child(even) .step-text { order: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="bar">
+  <a class="back" href="../index.html">← Back to portfolio</a>
+  <a class="bar-repo" href="https://github.com/JayUT10/Supervisor-Management-Application" target="_blank" rel="noopener">View Repo ↗</a>
+</div>
+
+<main>
+  <div class="eyebrow">Project 04 — README</div>
+  <h1 class="title">Supervisor<br>Management App</h1>
+  <p class="lead">A Django web application that manages exam supervision duties for schools, colleges, and universities. Administrators broadcast supervision requests to staff or outsiders, who accept or decline them — simplifying a long manual process.</p>
+  <div class="meta-chips">
+    <span class="chip">Python 3.12</span>
+    <span class="chip">Django 4.2</span>
+    <span class="chip">Bootstrap 5.3</span>
+    <span class="chip">SQLite</span>
+    <span class="chip">Custom Auth</span>
+  </div>
+
+  <hr class="rule">
+
+  <!-- 1. FEATURES -->
+  <section class="block">
+    <h2><span class="n">01</span> Features</h2>
+    <div class="two-col">
+      <div>
+        <h3>Admin Panel</h3>
+        <ul class="plain">
+          <li>Broadcast supervision requests to Teaching Staff, Outsiders, or both.</li>
+          <li>Configure Blocks / Floors / Rooms for the institution.</li>
+          <li>Configure School (Standards, Sections, Subjects) or University (Courses &amp; Semesters).</li>
+          <li>Manage users — approve, deactivate, or directly create accounts.</li>
+          <li>View all requests with filters by status and target group.</li>
+          <li>Track who accepted each request and how many declined.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>User Panel</h3>
+        <ul class="plain">
+          <li>View all open supervision requests broadcast to them.</li>
+          <li><strong>Accept</strong> a request — first to accept claims it (race-condition safe).</li>
+          <li><strong>Decline</strong> a request with a reason (disappears from their list).</li>
+          <li>Track accepted and declined history.</li>
+          <li>Edit personal profile.</li>
+        </ul>
+      </div>
+    </div>
+    <h3>System-wide</h3>
+    <ul class="plain">
+      <li>Two user types: <strong>Teaching Staff</strong> and <strong>Outsider</strong>.</li>
+      <li>Self-registration requires admin approval before login.</li>
+      <li>Admin-created users are immediately approved.</li>
+      <li>Institution configuration is persistent — set once, used everywhere.</li>
+    </ul>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 2. TECH STACK -->
+  <section class="block">
+    <h2><span class="n">02</span> Tech Stack</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+        <tbody>
+          <tr><td>Backend</td><td>Python 3.12, Django 4.2</td></tr>
+          <tr><td>Database</td><td>SQLite (development)</td></tr>
+          <tr><td>Frontend</td><td>Bootstrap 5.3, Bootstrap Icons</td></tr>
+          <tr><td>Auth</td><td>Django built-in auth with custom AbstractUser</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 3. SETUP -->
+  <section class="block">
+    <h2><span class="n">03</span> Installation &amp; Setup</h2>
+    <p class="section-intro">Prerequisites: Python 3.10+ and pip.</p>
+    <pre><code># 1. Clone / download the project
+cd path/to/Supervisor
+
+# 2. (Optional) Create a virtual environment
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS / Linux
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Apply database migrations
+python manage.py migrate
+
+# 5. Create the default admin account
+python create_admin.py</code></pre>
+
+    <h3>Running the Application</h3>
+    <pre><code>python manage.py runserver
+# Open http://127.0.0.1:8000
+
+# Default admin login
+# Username: admin
+# Password: admin123</code></pre>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 4. WALKTHROUGH -->
+  <section class="block">
+    <h2><span class="n">04</span> Walkthrough</h2>
+    <p class="section-intro">A complete workflow — from admin setup to a user accepting a request.</p>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 01</div>
+        <div class="step-title">Login Page</div>
+        <p>The entry point for all users. Unapproved self-registered users are blocked here until the admin approves their account. Admins route to the Admin Dashboard; staff and outsiders to their personal dashboard.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/01_login.png" alt="Login page">
+        <figcaption>01 — Login</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 02</div>
+        <div class="step-title">Registration</div>
+        <p>New supervisors (Teaching Staff or Outsiders) self-register. Their account stays pending until the admin approves it.</p>
+        <ul>
+          <li>Account Type — Teaching Staff or Outsider</li>
+          <li>Name, Username, Email, Phone</li>
+          <li>Department (for Teaching Staff) &amp; Institution</li>
+        </ul>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/02_register.png" alt="Registration page">
+        <figcaption>02 — Registration</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 03</div>
+        <div class="step-title">Admin — Dashboard</div>
+        <p>An overview of all supervision activity: total requests, open requests, accepted requests, registered supervisors, and pending user approvals — plus quick actions to broadcast, configure, and manage.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/03_admin_dashboard.png" alt="Admin dashboard">
+        <figcaption>03 — Admin Dashboard</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 04</div>
+        <div class="step-title">Institution Configuration</div>
+        <p>Configure the institution before creating requests. Choose School (Standards, Sections, Subjects) or University (degree programs), and set up Blocks, Floors, and Rooms as removable tags.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/04_institution_config.png" alt="Institution configuration">
+        <figcaption>04 — Institution Config</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 05</div>
+        <div class="step-title">Broadcast a Request</div>
+        <p>Broadcast a supervision request with exam date/time, location (Block / Floor / Room), class or course info, subject, and notes. The request goes to all eligible users — the <strong>first to accept</strong> becomes the supervisor.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/05_broadcast_request.png" alt="Broadcast request">
+        <figcaption>05 — Broadcast Request</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 06</div>
+        <div class="step-title">All Requests</div>
+        <p>View and filter every supervision request ever broadcast — by status (Open / Accepted) and target group. Columns show location, class info, subject, status, who accepted, and number of declines.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/06_all_requests.png" alt="All requests">
+        <figcaption>06 — All Requests</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 07</div>
+        <div class="step-title">Request Detail (Admin)</div>
+        <p>A detailed view of a single request — full location, class/course info, which group received the broadcast, who accepted it with contact details, number of declines, and a delete option.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/07_request_detail_admin.png" alt="Request detail admin">
+        <figcaption>07 — Request Detail (Admin)</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 08</div>
+        <div class="step-title">Manage Users</div>
+        <p>View all registered Teaching Staff and Outsiders. Approve pending accounts, deactivate users, or view full profiles and request history. Status badges: Approved, Pending, Deactivated.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/08_manage_users.png" alt="Manage users">
+        <figcaption>08 — Manage Users</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 09</div>
+        <div class="step-title">Create User</div>
+        <p>Admins can directly create accounts without waiting for self-registration. Pick account type, fill in details, set a password — the account is immediately active and approved.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/09_create_user.png" alt="Create user">
+        <figcaption>09 — Create User</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 10</div>
+        <div class="step-title">User — Dashboard</div>
+        <p>When a Teaching Staff or Outsider logs in, they see available requests, requests they've accepted, and requests they've declined. A yellow alert banner appears when open requests await action.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/10_user_dashboard.png" alt="User dashboard">
+        <figcaption>10 — User Dashboard</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 11</div>
+        <div class="step-title">Available Requests</div>
+        <p>The full list of supervision requests, organised into three tabs: Available (open and acceptable), Accepted by Me, and Declined. Each row shows exam date, time, location, class/course info, and subject.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/11_available_requests.png" alt="Available requests">
+        <figcaption>11 — Available Requests</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 12</div>
+        <div class="step-title">Accept or Decline</div>
+        <p>Clicking View shows the full detail page with action buttons. Accept locks the request instantly so no one else can claim it. Decline opens a modal asking for an optional reason — the request leaves your list but stays open for others.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/12_request_detail_user.png" alt="Request detail user">
+        <figcaption>12 — Accept / Decline</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <div class="step-text">
+        <div class="step-num">Step 13</div>
+        <div class="step-title">User — Profile</div>
+        <p>Users update their personal information any time — name, email, phone, department, institution, and address. The profile card shows current account status and user type badge.</p>
+      </div>
+      <figure class="step-shot">
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/13_profile.png" alt="Profile page">
+        <figcaption>13 — Profile</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 5. USER TYPES -->
+  <section class="block">
+    <h2><span class="n">05</span> User Types</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Type</th><th>Can Do</th></tr></thead>
+        <tbody>
+          <tr><td>Admin</td><td>Broadcast requests, configure institution, manage users, view all requests</td></tr>
+          <tr><td>Teaching Staff</td><td>View and respond to requests targeted at teaching staff or both</td></tr>
+          <tr><td>Outsider</td><td>View and respond to requests targeted at outsiders or both</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>University Program Reference</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Department</th><th>Program</th><th>Semesters</th></tr></thead>
+        <tbody>
+          <tr><td>Engineering</td><td>B.E. (Bachelor of Engineering)</td><td>8</td></tr>
+          <tr><td>Engineering</td><td>M.E. (Master of Engineering)</td><td>4</td></tr>
+          <tr><td>Commerce</td><td>B.Com (Bachelor of Commerce)</td><td>6</td></tr>
+          <tr><td>Commerce</td><td>M.Com (Master of Commerce)</td><td>4</td></tr>
+          <tr><td>Arts</td><td>B.A. (Bachelor of Arts)</td><td>6</td></tr>
+          <tr><td>Arts</td><td>M.A. (Master of Arts)</td><td>4</td></tr>
+          <tr><td>Medical</td><td>M.B.B.S.</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Jay Ullaskumar Trivedi</span>
+  <a href="https://github.com/JayUT10/Supervisor-Management-Application" target="_blank" rel="noopener">github.com/JayUT10 ↗</a>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  const ratio = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+  document.getElementById('progress').style.width = (ratio * 100) + '%';
+});
+</script>
+</body>
+</html>

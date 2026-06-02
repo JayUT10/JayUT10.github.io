@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Support Ticket Intelligence — Jay Trivedi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f9f7;
+      --fg: #0d0d0d;
+      --mid: #777;
+      --border: #ddd;
+      --mono: 'Space Mono', monospace;
+      --body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--body);
+      line-height: 1.65;
+    }
+
+    #progress {
+      position: fixed; top: 0; left: 0;
+      height: 2px; width: 0%;
+      background: var(--fg); z-index: 300;
+      transition: width 0.08s linear;
+    }
+
+    #bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 18px max(28px,5vw);
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 200;
+      background: rgba(249,249,247,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .back {
+      font-family: var(--mono); font-size: 11px; text-decoration: none;
+      color: var(--fg); letter-spacing: 0.08em;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: gap 0.2s;
+    }
+    .back:hover { gap: 14px; }
+    .bar-repo {
+      font-family: var(--mono); font-size: 10px; text-decoration: none;
+      color: var(--fg); letter-spacing: 0.1em; text-transform: uppercase;
+      border: 1px solid var(--fg); padding: 7px 13px;
+      transition: background 0.18s, color 0.18s;
+    }
+    .bar-repo:hover { background: var(--fg); color: var(--bg); }
+
+    main {
+      max-width: 920px; margin: 0 auto;
+      padding: 130px max(28px,5vw) 120px;
+    }
+
+    .eyebrow {
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid);
+      margin-bottom: 20px;
+    }
+    h1.title {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(32px,5.4vw,60px); letter-spacing: -0.045em;
+      line-height: 1.04; margin-bottom: 24px;
+    }
+    .lead {
+      font-size: clamp(16px,2vw,20px); font-weight: 300;
+      color: #2e2e2e; max-width: 680px; text-wrap: pretty;
+      margin-bottom: 36px;
+    }
+    .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 52px; }
+    .meta-chips .chip {
+      font-family: var(--mono); font-size: 11px;
+      padding: 5px 12px; border: 1px solid var(--fg); letter-spacing: 0.02em;
+    }
+
+    hr.rule { border: none; border-top: 1px solid var(--fg); margin: 64px 0 0; }
+
+    section.block { padding-top: 52px; }
+
+    h2 {
+      font-family: var(--mono); font-weight: 700;
+      font-size: clamp(22px,3vw,34px); letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      display: flex; align-items: baseline; gap: 14px;
+    }
+    h2 .n { font-size: 13px; color: var(--mid); font-weight: 400; letter-spacing: 0; }
+    h3 {
+      font-family: var(--mono); font-weight: 700; font-size: 15px;
+      letter-spacing: 0.02em; margin: 34px 0 14px; text-transform: uppercase;
+    }
+    h4 {
+      font-family: var(--mono); font-weight: 700; font-size: 12px;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid);
+      margin: 28px 0 12px;
+    }
+    p { margin: 14px 0; font-weight: 300; color: #2e2e2e; text-wrap: pretty; }
+    p.section-intro { font-size: 16px; margin-top: 14px; }
+
+    code {
+      font-family: var(--mono); font-size: 0.86em;
+      background: #ececea; padding: 2px 6px; border-radius: 2px;
+    }
+    strong { font-weight: 500; color: var(--fg); }
+
+    .tasks { list-style: none; margin: 20px 0; border-top: 1px solid var(--fg); }
+    .tasks li {
+      display: grid; grid-template-columns: 38px 1fr; gap: 18px;
+      padding: 18px 0; border-bottom: 1px solid var(--border); align-items: baseline;
+    }
+    .tasks .tnum { font-family: var(--mono); font-size: 12px; color: var(--mid); }
+    .tasks .tname { font-family: var(--mono); font-weight: 700; font-size: 15px; }
+    .tasks .tdesc { font-weight: 300; color: #444; font-size: 14px; margin-top: 4px; }
+
+    .table-wrap { overflow-x: auto; margin: 20px 0; border: 1px solid var(--border); }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 460px; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th {
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--fg); color: var(--bg);
+    }
+    td { font-weight: 300; color: #2e2e2e; }
+    td:first-child { font-family: var(--mono); font-size: 12px; }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(0,0,0,0.025); }
+    .best { color: var(--fg); font-weight: 600; }
+
+    blockquote {
+      border-left: 2px solid var(--fg);
+      padding: 4px 0 4px 18px; margin: 18px 0;
+      font-size: 14px; color: #444; font-style: italic;
+    }
+
+    pre {
+      background: #14140f; color: #e8e8e2;
+      font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+      padding: 22px 24px; overflow-x: auto; margin: 20px 0; border-radius: 3px;
+    }
+    pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+    .graphs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 8px; }
+    .graphs.one { grid-template-columns: 1fr; max-width: 620px; }
+    figure { margin: 0; border: 1px solid var(--border); background: #fff; }
+    figure img { display: block; width: 100%; height: auto; }
+    figcaption {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--mid);
+      padding: 8px 12px; border-top: 1px solid var(--border);
+    }
+
+    .chips-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+    .cat-chip {
+      font-family: var(--mono); font-size: 12px; padding: 6px 13px;
+      border: 1px solid var(--fg); letter-spacing: 0.02em;
+    }
+
+    .verdict { border: 1px solid var(--fg); padding: 22px 24px; margin: 24px 0; }
+    .verdict p:first-child { margin-top: 0; }
+    .verdict p:last-child { margin-bottom: 0; }
+
+    ol, ul.plain { margin: 14px 0 14px 20px; font-weight: 300; color: #2e2e2e; }
+    ol li, ul.plain li { margin: 8px 0; padding-left: 6px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+    .two-col h3 { margin-top: 0; }
+
+    footer {
+      border-top: 1px solid var(--fg);
+      padding: 28px max(28px,5vw);
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 10px; color: var(--mid);
+      letter-spacing: 0.1em; flex-wrap: wrap; gap: 12px;
+    }
+    footer a { color: var(--fg); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .graphs { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="bar">
+  <a class="back" href="../index.html">← Back to portfolio</a>
+  <a class="bar-repo" href="https://github.com/JayUT10/Customer_Support_Ticket_Intelligence_System-" target="_blank" rel="noopener">View Repo ↗</a>
+</div>
+
+<main>
+  <div class="eyebrow">Project 01 — README</div>
+  <h1 class="title">Customer Support<br>Ticket Intelligence</h1>
+  <p class="lead">An AI system that automatically summarizes customer complaints and predicts their category and priority using NLP and machine learning. Trained on a 10,000-ticket synthetic dataset with TF-IDF features, comparing Logistic Regression and SVM.</p>
+  <div class="meta-chips">
+    <span class="chip">NLP</span>
+    <span class="chip">TF-IDF</span>
+    <span class="chip">Logistic Regression</span>
+    <span class="chip">SVM</span>
+    <span class="chip">scikit-learn</span>
+    <span class="chip">NLTK</span>
+  </div>
+
+  <hr class="rule">
+
+  <!-- 1. PROBLEM -->
+  <section class="block">
+    <h2><span class="n">01</span> Understanding the Problem</h2>
+    <p class="section-intro">The goal is to develop an AI system that automatically processes complaint text and performs three key tasks:</p>
+    <ul class="tasks">
+      <li>
+        <span class="tnum">01</span>
+        <div>
+          <div class="tname">Categorization</div>
+          <div class="tdesc">Identify the type of issue (e.g. microphone issue, speaker issue, etc.)</div>
+        </div>
+      </li>
+      <li>
+        <span class="tnum">02</span>
+        <div>
+          <div class="tname">Priority Assignment</div>
+          <div class="tdesc">Determine the urgency level of the complaint — High, Medium, or Low.</div>
+        </div>
+      </li>
+      <li>
+        <span class="tnum">03</span>
+        <div>
+          <div class="tname">Summarization</div>
+          <div class="tdesc">Generate a short, clear summary so support agents can quickly understand the problem.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 2. APPROACH -->
+  <section class="block">
+    <h2><span class="n">02</span> Approach</h2>
+    <p class="section-intro">An end-to-end AI pipeline that takes raw textual input and applies NLP and machine learning to predict the complaint category, assign priority, and generate a concise summary.</p>
+
+    <h3>2.1 — Data Collection &amp; Understanding</h3>
+    <p>A labeled 10,000-ticket synthetic dataset was used, containing ticket ID, customer name, categories, complaint subjects, descriptions, status, and priority levels. Analyzed for text length, class distribution, and data quality before preprocessing.</p>
+    <h4>Categories</h4>
+    <div class="chips-row">
+      <span class="cat-chip">Motherboard Issue</span>
+      <span class="cat-chip">Screen Issue</span>
+      <span class="cat-chip">Camera Issue</span>
+      <span class="cat-chip">Button Issue</span>
+      <span class="cat-chip">Battery Issue</span>
+      <span class="cat-chip">Microphone Issue</span>
+      <span class="cat-chip">Speaker Issue</span>
+    </div>
+    <div class="graphs">
+      <figure>
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/category_proportion.png" alt="Category proportion">
+        <figcaption>Category proportion</figcaption>
+      </figure>
+      <figure>
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/priority_distribution.png" alt="Priority distribution">
+        <figcaption>Priority distribution</figcaption>
+      </figure>
+    </div>
+
+    <h3>2.2 — Text Preprocessing</h3>
+    <p>Raw complaint text was cleaned and normalized to remove noise:</p>
+    <ul class="plain">
+      <li>Converting text to lowercase.</li>
+      <li>Removing URLs, numbers, and special characters using regular expressions.</li>
+      <li>Removing stopwords using NLTK.</li>
+    </ul>
+
+    <h3>2.3 — Feature Extraction</h3>
+    <p>The cleaned text was converted into numerical features using <strong>TF-IDF</strong> (Term Frequency–Inverse Document Frequency). Both unigrams and bigrams were considered, and the most informative features selected — enabling the models to effectively learn patterns from text data.</p>
+    <div class="graphs one">
+      <figure>
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/text_length_distribution.png" alt="Text length distribution">
+        <figcaption>Text length distribution</figcaption>
+      </figure>
+    </div>
+
+    <h3>2.4 — Model Training</h3>
+    <p>Supervised models were trained on the TF-IDF features to predict complaint category and priority:</p>
+    <ul class="plain">
+      <li><strong>Logistic Regression</strong> (final model) — models class-membership probability via a logistic/softmax function, learning a linear decision boundary.</li>
+      <li><strong>Support Vector Machine (SVM)</strong> — separates classes by finding an optimal hyperplane that maximizes the margin between classes.</li>
+    </ul>
+
+    <h3>2.5 — Complaint Summarization</h3>
+    <p>Applied only during prediction. When a user submits a new complaint, an extractive summarization technique based on TF-IDF sentence scoring generates a short, meaningful summary.</p>
+
+    <h3>2.6 — Prediction &amp; Confidence Estimation</h3>
+    <p>The complaint is preprocessed and transformed using the saved TF-IDF vectorizer. The trained model predicts category and priority, with confidence scores from probabilistic outputs (<code>predict_proba</code>) or calibrated probabilities for SVM. Final output: complaint summary, predicted category, predicted priority.</p>
+    <div class="graphs one">
+      <figure>
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/Customer%20Support%20ticket%20.png" alt="System working diagram">
+        <figcaption>System workflow</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 3. PERFORMANCE -->
+  <section class="block">
+    <h2><span class="n">03</span> Model Performance</h2>
+    <p class="section-intro">Standard classification metrics were used: Accuracy, Precision, Recall, F1-score, and Confusion Matrix — evaluated for both category and priority prediction.</p>
+
+    <h3>Logistic Regression (Final Model)</h3>
+    <p>The system achieved <strong>1.00 (100%)</strong> accuracy for category classification due to clean, well-defined labels, while priority prediction achieved <strong>0.74 (74%)</strong> accuracy due to the subjective, context-dependent nature of urgency levels.</p>
+    <div class="graphs">
+      <figure>
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/category_confusion_matrix.png" alt="Category confusion matrix">
+        <figcaption>Category — confusion matrix</figcaption>
+      </figure>
+      <figure>
+        <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/priority_confusion_matrix.png" alt="Priority confusion matrix">
+        <figcaption>Priority — confusion matrix</figcaption>
+      </figure>
+    </div>
+
+    <h3>Logistic Regression vs SVM</h3>
+    <p>Compared using identical subject and description text for each test case, ensuring a fair evaluation under the same input conditions.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Test Case</th><th>Model</th><th>Pred. Category</th><th>Cat. Conf.</th><th>Pred. Priority</th><th>Pri. Conf.</th></tr></thead>
+        <tbody>
+          <tr><td>Screen</td><td class="best">Logistic Reg.</td><td>Screen Issue</td><td class="best">0.705</td><td>High</td><td class="best">0.655</td></tr>
+          <tr><td>Screen</td><td>SVM</td><td>Screen Issue</td><td>0.325</td><td>High</td><td>0.556</td></tr>
+          <tr><td>Camera</td><td class="best">Logistic Reg.</td><td>Camera Issue</td><td class="best">0.897</td><td>Medium</td><td class="best">0.608</td></tr>
+          <tr><td>Camera</td><td>SVM</td><td>Camera Issue</td><td>0.421</td><td>Medium</td><td>0.507</td></tr>
+          <tr><td>Microphone</td><td class="best">Logistic Reg.</td><td>Microphone Issue</td><td class="best">0.826</td><td>Low</td><td class="best">0.461</td></tr>
+          <tr><td>Microphone</td><td>SVM</td><td>Microphone Issue</td><td>0.375</td><td>Low</td><td>0.441</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="verdict">
+      <p>Both models correctly predicted category and priority on every test case. <strong>Logistic Regression consistently produced higher confidence scores</strong>, while SVM showed lower confidence values due to its margin-based classification approach — making Logistic Regression the chosen final model.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 4. LIMITATIONS -->
+  <section class="block">
+    <h2><span class="n">04</span> Limitations &amp; Solutions</h2>
+    <div class="two-col">
+      <div>
+        <h3>Limitations</h3>
+        <ol>
+          <li>TF-IDF features don't understand word context.</li>
+          <li>Keyword-based patterns may reduce accuracy for ambiguous complaints.</li>
+          <li>Priority prediction is less accurate due to subjective urgency.</li>
+          <li>Synthetic training data may not reflect real-world variation.</li>
+          <li>Extractive summaries may contain grammatical errors.</li>
+          <li>100% category accuracy may indicate overfitting to clean labels.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>Solutions</h3>
+        <ol>
+          <li>Transformer-based models for semantic understanding.</li>
+          <li>Train on real-world complaint data for generalization.</li>
+          <li>Hybrid ML + rule-based logic for priority.</li>
+          <li>Neural summarization for fluent, grammatical summaries.</li>
+          <li>Regular validation with unseen, noisy data.</li>
+          <li>Cross-validation &amp; regularization to reduce overfitting.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 5. FUTURE -->
+  <section class="block">
+    <h2><span class="n">05</span> Future Improvements</h2>
+    <ol>
+      <li>Integrate context-aware deep learning models to better understand complaint semantics.</li>
+      <li>Train on real-world customer support data to improve robustness.</li>
+      <li>Implement advanced neural summarization for grammatically correct summaries.</li>
+      <li>Enhance priority prediction by combining ML with rule-based urgency detection.</li>
+      <li>Deploy the system as a real-time API for customer support platforms.</li>
+      <li>Continuously retrain with new incoming complaints to reduce overfitting.</li>
+    </ol>
+  </section>
+
+  <hr class="rule">
+
+  <!-- 6. HOW TO USE -->
+  <section class="block">
+    <h2><span class="n">06</span> How to Use</h2>
+    <p class="section-intro">Run the prediction system to get the complaint <strong>summary</strong>, <strong>category</strong>, and <strong>priority</strong>.</p>
+
+    <h4>Step 1 — Open the prediction file</h4>
+    <p>Open <code>predict_logistic_regression.py</code> or <code>predict_svm.py</code> in your editor.</p>
+
+    <h4>Step 2 — Enter complaint details</h4>
+    <pre><code>if __name__ == "__main__":
+    subject = "Microphone is not working"
+    description = "I am experiencing an issue where my voice is not being captured properly during calls or recordings."</code></pre>
+
+    <h4>Step 3 — Run the script</h4>
+    <pre><code>python predict_logistic_regression.py
+# or, for SVM:
+python predict_svm.py</code></pre>
+
+    <h4>Step 4 — View the output</h4>
+    <pre><code>Summary: Experiencing issue phone voice captured properly during calls
+Category: Microphone Issue | Confidence: 0.82
+Priority: Low | Confidence: 0.46</code></pre>
+
+    <h4>Step 5 — Try different complaints</h4>
+    <p>Change the <code>subject</code> and <code>description</code> values to simulate different issues — screen, camera, battery, or audio problems.</p>
+  </section>
+</main>
+
+<footer>
+  <span>© 2026 Jay Ullaskumar Trivedi</span>
+  <a href="https://github.com/JayUT10/Customer_Support_Ticket_Intelligence_System-" target="_blank" rel="noopener">github.com/JayUT10 ↗</a>
+</footer>
+
+<script>
+window.addEventListener('scroll', () => {
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  const ratio = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+  document.getElementById('progress').style.width = (ratio * 100) + '%';
+});
+</script>
+</body>
+</html>
