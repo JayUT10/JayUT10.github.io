@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Support Ticket Intelligence — Jay Trivedi</title>
+  <title>Customer Support Ticket Intelligence - Jay Trivedi</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -199,7 +199,7 @@
 </div>
 
 <main>
-  <div class="eyebrow">Project 01 — README</div>
+  <div class="eyebrow">Project 01 - README</div>
   <h1 class="title">Customer Support<br>Ticket Intelligence</h1>
   <p class="lead">An AI system that automatically summarizes customer complaints and predicts their category and priority using NLP and machine learning. Trained on a 10,000-ticket synthetic dataset with TF-IDF features, comparing Logistic Regression and SVM.</p>
   <div class="meta-chips">
@@ -229,7 +229,7 @@
         <span class="tnum">02</span>
         <div>
           <div class="tname">Priority Assignment</div>
-          <div class="tdesc">Determine the urgency level of the complaint — High, Medium, or Low.</div>
+          <div class="tdesc">Determine the urgency level of the complaint - High, Medium, or Low.</div>
         </div>
       </li>
       <li>
@@ -249,7 +249,7 @@
     <h2><span class="n">02</span> Approach</h2>
     <p class="section-intro">An end-to-end AI pipeline that takes raw textual input and applies NLP and machine learning to predict the complaint category, assign priority, and generate a concise summary.</p>
 
-    <h3>2.1 — Data Collection &amp; Understanding</h3>
+    <h3>2.1 - Data Collection &amp; Understanding</h3>
     <p>A labeled 10,000-ticket synthetic dataset was used, containing ticket ID, customer name, categories, complaint subjects, descriptions, status, and priority levels. Analyzed for text length, class distribution, and data quality before preprocessing.</p>
     <h4>Categories</h4>
     <div class="chips-row">
@@ -272,7 +272,7 @@
       </figure>
     </div>
 
-    <h3>2.2 — Text Preprocessing</h3>
+    <h3>2.2 - Text Preprocessing</h3>
     <p>Raw complaint text was cleaned and normalized to remove noise:</p>
     <ul class="plain">
       <li>Converting text to lowercase.</li>
@@ -280,8 +280,8 @@
       <li>Removing stopwords using NLTK.</li>
     </ul>
 
-    <h3>2.3 — Feature Extraction</h3>
-    <p>The cleaned text was converted into numerical features using <strong>TF-IDF</strong> (Term Frequency–Inverse Document Frequency). Both unigrams and bigrams were considered, and the most informative features selected — enabling the models to effectively learn patterns from text data.</p>
+    <h3>2.3 - Feature Extraction</h3>
+    <p>The cleaned text was converted into numerical features using <strong>TF-IDF</strong> (Term Frequency–Inverse Document Frequency). Both unigrams and bigrams were considered, and the most informative features selected - enabling the models to effectively learn patterns from text data.</p>
     <div class="graphs one">
       <figure>
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/text_length_distribution.png" alt="Text length distribution">
@@ -289,17 +289,17 @@
       </figure>
     </div>
 
-    <h3>2.4 — Model Training</h3>
+    <h3>2.4 - Model Training</h3>
     <p>Supervised models were trained on the TF-IDF features to predict complaint category and priority:</p>
     <ul class="plain">
-      <li><strong>Logistic Regression</strong> (final model) — models class-membership probability via a logistic/softmax function, learning a linear decision boundary.</li>
-      <li><strong>Support Vector Machine (SVM)</strong> — separates classes by finding an optimal hyperplane that maximizes the margin between classes.</li>
+      <li><strong>Logistic Regression</strong> (final model) - models class-membership probability via a logistic/softmax function, learning a linear decision boundary.</li>
+      <li><strong>Support Vector Machine (SVM)</strong> - separates classes by finding an optimal hyperplane that maximizes the margin between classes.</li>
     </ul>
 
-    <h3>2.5 — Complaint Summarization</h3>
+    <h3>2.5 - Complaint Summarization</h3>
     <p>Applied only during prediction. When a user submits a new complaint, an extractive summarization technique based on TF-IDF sentence scoring generates a short, meaningful summary.</p>
 
-    <h3>2.6 — Prediction &amp; Confidence Estimation</h3>
+    <h3>2.6 - Prediction &amp; Confidence Estimation</h3>
     <p>The complaint is preprocessed and transformed using the saved TF-IDF vectorizer. The trained model predicts category and priority, with confidence scores from probabilistic outputs (<code>predict_proba</code>) or calibrated probabilities for SVM. Final output: complaint summary, predicted category, predicted priority.</p>
     <div class="graphs one">
       <figure>
@@ -314,18 +314,18 @@
   <!-- 3. PERFORMANCE -->
   <section class="block">
     <h2><span class="n">03</span> Model Performance</h2>
-    <p class="section-intro">Standard classification metrics were used: Accuracy, Precision, Recall, F1-score, and Confusion Matrix — evaluated for both category and priority prediction.</p>
+    <p class="section-intro">Standard classification metrics were used: Accuracy, Precision, Recall, F1-score, and Confusion Matrix - evaluated for both category and priority prediction.</p>
 
     <h3>Logistic Regression (Final Model)</h3>
     <p>The system achieved <strong>1.00 (100%)</strong> accuracy for category classification due to clean, well-defined labels, while priority prediction achieved <strong>0.74 (74%)</strong> accuracy due to the subjective, context-dependent nature of urgency levels.</p>
     <div class="graphs">
       <figure>
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/category_confusion_matrix.png" alt="Category confusion matrix">
-        <figcaption>Category — confusion matrix</figcaption>
+        <figcaption>Category - confusion matrix</figcaption>
       </figure>
       <figure>
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Customer_Support_Ticket_Intelligence_System-/master/preprocessing/plots/priority_confusion_matrix.png" alt="Priority confusion matrix">
-        <figcaption>Priority — confusion matrix</figcaption>
+        <figcaption>Priority - confusion matrix</figcaption>
       </figure>
     </div>
 
@@ -345,7 +345,7 @@
       </table>
     </div>
     <div class="verdict">
-      <p>Both models correctly predicted category and priority on every test case. <strong>Logistic Regression consistently produced higher confidence scores</strong>, while SVM showed lower confidence values due to its margin-based classification approach — making Logistic Regression the chosen final model.</p>
+      <p>Both models correctly predicted category and priority on every test case. <strong>Logistic Regression consistently produced higher confidence scores</strong>, while SVM showed lower confidence values due to its margin-based classification approach - making Logistic Regression the chosen final model.</p>
     </div>
   </section>
 
@@ -402,26 +402,26 @@
     <h2><span class="n">06</span> How to Use</h2>
     <p class="section-intro">Run the prediction system to get the complaint <strong>summary</strong>, <strong>category</strong>, and <strong>priority</strong>.</p>
 
-    <h4>Step 1 — Open the prediction file</h4>
+    <h4>Step 1 - Open the prediction file</h4>
     <p>Open <code>predict_logistic_regression.py</code> or <code>predict_svm.py</code> in your editor.</p>
 
-    <h4>Step 2 — Enter complaint details</h4>
+    <h4>Step 2 - Enter complaint details</h4>
     <pre><code>if __name__ == "__main__":
     subject = "Microphone is not working"
     description = "I am experiencing an issue where my voice is not being captured properly during calls or recordings."</code></pre>
 
-    <h4>Step 3 — Run the script</h4>
+    <h4>Step 3 - Run the script</h4>
     <pre><code>python predict_logistic_regression.py
 # or, for SVM:
 python predict_svm.py</code></pre>
 
-    <h4>Step 4 — View the output</h4>
+    <h4>Step 4 - View the output</h4>
     <pre><code>Summary: Experiencing issue phone voice captured properly during calls
 Category: Microphone Issue | Confidence: 0.82
 Priority: Low | Confidence: 0.46</code></pre>
 
-    <h4>Step 5 — Try different complaints</h4>
-    <p>Change the <code>subject</code> and <code>description</code> values to simulate different issues — screen, camera, battery, or audio problems.</p>
+    <h4>Step 5 - Try different complaints</h4>
+    <p>Change the <code>subject</code> and <code>description</code> values to simulate different issues - screen, camera, battery, or audio problems.</p>
   </section>
 </main>
 

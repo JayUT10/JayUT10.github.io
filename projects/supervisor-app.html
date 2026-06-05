@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Supervisor Management Application — Jay Trivedi</title>
+  <title>Supervisor Management Application - Jay Trivedi</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -177,9 +177,9 @@
 </div>
 
 <main>
-  <div class="eyebrow">Project 04 — README</div>
+  <div class="eyebrow">Project 04 - README</div>
   <h1 class="title">Supervisor<br>Management App</h1>
-  <p class="lead">A Django web application that manages exam supervision duties for schools, colleges, and universities. Administrators broadcast supervision requests to staff or outsiders, who accept or decline them — simplifying a long manual process.</p>
+  <p class="lead">A Django web application that manages exam supervision duties for schools, colleges, and universities. Administrators broadcast supervision requests to staff or outsiders, who accept or decline them - simplifying a long manual process.</p>
   <div class="meta-chips">
     <span class="chip">Python 3.12</span>
     <span class="chip">Django 4.2</span>
@@ -200,7 +200,7 @@
           <li>Broadcast supervision requests to Teaching Staff, Outsiders, or both.</li>
           <li>Configure Blocks / Floors / Rooms for the institution.</li>
           <li>Configure School (Standards, Sections, Subjects) or University (Courses &amp; Semesters).</li>
-          <li>Manage users — approve, deactivate, or directly create accounts.</li>
+          <li>Manage users - approve, deactivate, or directly create accounts.</li>
           <li>View all requests with filters by status and target group.</li>
           <li>Track who accepted each request and how many declined.</li>
         </ul>
@@ -209,7 +209,7 @@
         <h3>User Panel</h3>
         <ul class="plain">
           <li>View all open supervision requests broadcast to them.</li>
-          <li><strong>Accept</strong> a request — first to accept claims it (race-condition safe).</li>
+          <li><strong>Accept</strong> a request - first to accept claims it (race-condition safe).</li>
           <li><strong>Decline</strong> a request with a reason (disappears from their list).</li>
           <li>Track accepted and declined history.</li>
           <li>Edit personal profile.</li>
@@ -221,7 +221,7 @@
       <li>Two user types: <strong>Teaching Staff</strong> and <strong>Outsider</strong>.</li>
       <li>Self-registration requires admin approval before login.</li>
       <li>Admin-created users are immediately approved.</li>
-      <li>Institution configuration is persistent — set once, used everywhere.</li>
+      <li>Institution configuration is persistent - set once, used everywhere.</li>
     </ul>
   </section>
 
@@ -280,7 +280,7 @@ python create_admin.py</code></pre>
   <!-- 4. WALKTHROUGH -->
   <section class="block">
     <h2><span class="n">04</span> Walkthrough</h2>
-    <p class="section-intro">A complete workflow — from admin setup to a user accepting a request.</p>
+    <p class="section-intro">A complete workflow - from admin setup to a user accepting a request.</p>
 
     <div class="step">
       <div class="step-text">
@@ -290,7 +290,7 @@ python create_admin.py</code></pre>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/01_login.png" alt="Login page">
-        <figcaption>01 — Login</figcaption>
+        <figcaption>01 - Login</figcaption>
       </figure>
     </div>
 
@@ -300,26 +300,26 @@ python create_admin.py</code></pre>
         <div class="step-title">Registration</div>
         <p>New supervisors (Teaching Staff or Outsiders) self-register. Their account stays pending until the admin approves it.</p>
         <ul>
-          <li>Account Type — Teaching Staff or Outsider</li>
+          <li>Account Type - Teaching Staff or Outsider</li>
           <li>Name, Username, Email, Phone</li>
           <li>Department (for Teaching Staff) &amp; Institution</li>
         </ul>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/02_register.png" alt="Registration page">
-        <figcaption>02 — Registration</figcaption>
+        <figcaption>02 - Registration</figcaption>
       </figure>
     </div>
 
     <div class="step">
       <div class="step-text">
         <div class="step-num">Step 03</div>
-        <div class="step-title">Admin — Dashboard</div>
-        <p>An overview of all supervision activity: total requests, open requests, accepted requests, registered supervisors, and pending user approvals — plus quick actions to broadcast, configure, and manage.</p>
+        <div class="step-title">Admin - Dashboard</div>
+        <p>An overview of all supervision activity: total requests, open requests, accepted requests, registered supervisors, and pending user approvals - plus quick actions to broadcast, configure, and manage.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/03_admin_dashboard.png" alt="Admin dashboard">
-        <figcaption>03 — Admin Dashboard</figcaption>
+        <figcaption>03 - Admin Dashboard</figcaption>
       </figure>
     </div>
 
@@ -331,7 +331,7 @@ python create_admin.py</code></pre>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/04_institution_config.png" alt="Institution configuration">
-        <figcaption>04 — Institution Config</figcaption>
+        <figcaption>04 - Institution Config</figcaption>
       </figure>
     </div>
 
@@ -339,11 +339,11 @@ python create_admin.py</code></pre>
       <div class="step-text">
         <div class="step-num">Step 05</div>
         <div class="step-title">Broadcast a Request</div>
-        <p>Broadcast a supervision request with exam date/time, location (Block / Floor / Room), class or course info, subject, and notes. The request goes to all eligible users — the <strong>first to accept</strong> becomes the supervisor.</p>
+        <p>Broadcast a supervision request with exam date/time, location (Block / Floor / Room), class or course info, subject, and notes. The request goes to all eligible users - the <strong>first to accept</strong> becomes the supervisor.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/05_broadcast_request.png" alt="Broadcast request">
-        <figcaption>05 — Broadcast Request</figcaption>
+        <figcaption>05 - Broadcast Request</figcaption>
       </figure>
     </div>
 
@@ -351,11 +351,11 @@ python create_admin.py</code></pre>
       <div class="step-text">
         <div class="step-num">Step 06</div>
         <div class="step-title">All Requests</div>
-        <p>View and filter every supervision request ever broadcast — by status (Open / Accepted) and target group. Columns show location, class info, subject, status, who accepted, and number of declines.</p>
+        <p>View and filter every supervision request ever broadcast - by status (Open / Accepted) and target group. Columns show location, class info, subject, status, who accepted, and number of declines.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/06_all_requests.png" alt="All requests">
-        <figcaption>06 — All Requests</figcaption>
+        <figcaption>06 - All Requests</figcaption>
       </figure>
     </div>
 
@@ -363,11 +363,11 @@ python create_admin.py</code></pre>
       <div class="step-text">
         <div class="step-num">Step 07</div>
         <div class="step-title">Request Detail (Admin)</div>
-        <p>A detailed view of a single request — full location, class/course info, which group received the broadcast, who accepted it with contact details, number of declines, and a delete option.</p>
+        <p>A detailed view of a single request - full location, class/course info, which group received the broadcast, who accepted it with contact details, number of declines, and a delete option.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/07_request_detail_admin.png" alt="Request detail admin">
-        <figcaption>07 — Request Detail (Admin)</figcaption>
+        <figcaption>07 - Request Detail (Admin)</figcaption>
       </figure>
     </div>
 
@@ -379,7 +379,7 @@ python create_admin.py</code></pre>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/08_manage_users.png" alt="Manage users">
-        <figcaption>08 — Manage Users</figcaption>
+        <figcaption>08 - Manage Users</figcaption>
       </figure>
     </div>
 
@@ -387,23 +387,23 @@ python create_admin.py</code></pre>
       <div class="step-text">
         <div class="step-num">Step 09</div>
         <div class="step-title">Create User</div>
-        <p>Admins can directly create accounts without waiting for self-registration. Pick account type, fill in details, set a password — the account is immediately active and approved.</p>
+        <p>Admins can directly create accounts without waiting for self-registration. Pick account type, fill in details, set a password - the account is immediately active and approved.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/09_create_user.png" alt="Create user">
-        <figcaption>09 — Create User</figcaption>
+        <figcaption>09 - Create User</figcaption>
       </figure>
     </div>
 
     <div class="step">
       <div class="step-text">
         <div class="step-num">Step 10</div>
-        <div class="step-title">User — Dashboard</div>
+        <div class="step-title">User - Dashboard</div>
         <p>When a Teaching Staff or Outsider logs in, they see available requests, requests they've accepted, and requests they've declined. A yellow alert banner appears when open requests await action.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/10_user_dashboard.png" alt="User dashboard">
-        <figcaption>10 — User Dashboard</figcaption>
+        <figcaption>10 - User Dashboard</figcaption>
       </figure>
     </div>
 
@@ -415,7 +415,7 @@ python create_admin.py</code></pre>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/11_available_requests.png" alt="Available requests">
-        <figcaption>11 — Available Requests</figcaption>
+        <figcaption>11 - Available Requests</figcaption>
       </figure>
     </div>
 
@@ -423,23 +423,23 @@ python create_admin.py</code></pre>
       <div class="step-text">
         <div class="step-num">Step 12</div>
         <div class="step-title">Accept or Decline</div>
-        <p>Clicking View shows the full detail page with action buttons. Accept locks the request instantly so no one else can claim it. Decline opens a modal asking for an optional reason — the request leaves your list but stays open for others.</p>
+        <p>Clicking View shows the full detail page with action buttons. Accept locks the request instantly so no one else can claim it. Decline opens a modal asking for an optional reason - the request leaves your list but stays open for others.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/12_request_detail_user.png" alt="Request detail user">
-        <figcaption>12 — Accept / Decline</figcaption>
+        <figcaption>12 - Accept / Decline</figcaption>
       </figure>
     </div>
 
     <div class="step">
       <div class="step-text">
         <div class="step-num">Step 13</div>
-        <div class="step-title">User — Profile</div>
-        <p>Users update their personal information any time — name, email, phone, department, institution, and address. The profile card shows current account status and user type badge.</p>
+        <div class="step-title">User - Profile</div>
+        <p>Users update their personal information any time - name, email, phone, department, institution, and address. The profile card shows current account status and user type badge.</p>
       </div>
       <figure class="step-shot">
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Supervisor-Management-Application/main/docs/screenshots/13_profile.png" alt="Profile page">
-        <figcaption>13 — Profile</figcaption>
+        <figcaption>13 - Profile</figcaption>
       </figure>
     </div>
   </section>

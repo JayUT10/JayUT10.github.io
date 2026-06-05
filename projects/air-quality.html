@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Air Quality Prediction — Jay Trivedi</title>
+  <title>Air Quality Prediction - Jay Trivedi</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -211,7 +211,7 @@
 </div>
 
 <main>
-  <div class="eyebrow">Project 03 — README</div>
+  <div class="eyebrow">Project 03 - README</div>
   <h1 class="title">AQI Prediction<br>ML Project</h1>
   <p class="lead">Predicting Air Quality Index (AQI) and individual pollutant concentrations for Delhi stations using Linear Regression and LSTM models. Trained on 2021–2023 daily data, tested on the full year 2024.</p>
   <div class="meta-chips">
@@ -246,10 +246,10 @@
       <table>
         <thead><tr><th>Column</th><th>Description</th><th>Unit</th></tr></thead>
         <tbody>
-          <tr><td>Date</td><td>Day of month (1–31)</td><td>—</td></tr>
-          <tr><td>Month</td><td>Month number (1–12)</td><td>—</td></tr>
-          <tr><td>Year</td><td>Calendar year</td><td>—</td></tr>
-          <tr><td>Days</td><td>Day of week (1=Mon … 7=Sun)</td><td>—</td></tr>
+          <tr><td>Date</td><td>Day of month (1–31)</td><td>-</td></tr>
+          <tr><td>Month</td><td>Month number (1–12)</td><td>-</td></tr>
+          <tr><td>Year</td><td>Calendar year</td><td>-</td></tr>
+          <tr><td>Days</td><td>Day of week (1=Mon … 7=Sun)</td><td>-</td></tr>
           <tr><td>Holidays_Count</td><td>Public holidays that day</td><td>count</td></tr>
           <tr><td>PM2.5</td><td>Fine particulate matter (≤ 2.5 µm)</td><td>µg/m³</td></tr>
           <tr><td>PM10</td><td>Coarse particulate matter (≤ 10 µm)</td><td>µg/m³</td></tr>
@@ -315,10 +315,10 @@
 
   <!-- 3. LINEAR REGRESSION -->
   <section class="block">
-    <h2><span class="n">03</span> Model 1 — Linear Regression</h2>
-    <p class="section-intro">Algorithm: <code>sklearn.linear_model.LinearRegression</code>. Each of the 7 targets has its own separate script. The key feature added for each target is <strong>TARGET_lag1</strong> (previous day's own value) — providing the autocorrelation signal that makes SO2, NO2, CO, and Ozone predictable without overfitting.</p>
+    <h2><span class="n">03</span> Model 1 - Linear Regression</h2>
+    <p class="section-intro">Algorithm: <code>sklearn.linear_model.LinearRegression</code>. Each of the 7 targets has its own separate script. The key feature added for each target is <strong>TARGET_lag1</strong> (previous day's own value) - providing the autocorrelation signal that makes SO2, NO2, CO, and Ozone predictable without overfitting.</p>
 
-    <h3>Results — Linear Regression (Test 2024)</h3>
+    <h3>Results - Linear Regression (Test 2024)</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Target</th><th>Train R²</th><th>Test R²</th><th>RMSE</th><th>MAE</th><th>F1</th><th>AUC</th></tr></thead>
@@ -334,7 +334,7 @@
       </table>
     </div>
 
-    <h4>AQI — Linear Regression</h4>
+    <h4>AQI - Linear Regression</h4>
     <div class="graphs">
       <figure>
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Air-Quality-Prediction-using-LSTM-and-Regression/master/outputs/regression/linear/AQI/train_graph.png" alt="AQI Linear Regression training graph">
@@ -352,8 +352,8 @@
 
   <!-- 4. LSTM -->
   <section class="block">
-    <h2><span class="n">04</span> Model 2 — LSTM (PyTorch)</h2>
-    <p class="section-intro">Total trainable parameters: <strong>56,129</strong>. Sequence length of 14 days, including the target variable itself in the sequence features — the LSTM equivalent of lag features.</p>
+    <h2><span class="n">04</span> Model 2 - LSTM (PyTorch)</h2>
+    <p class="section-intro">Total trainable parameters: <strong>56,129</strong>. Sequence length of 14 days, including the target variable itself in the sequence features - the LSTM equivalent of lag features.</p>
 
     <h3>Training Configuration</h3>
     <div class="table-wrap">
@@ -374,7 +374,7 @@
       </table>
     </div>
 
-    <h3>Results — LSTM (Test 2024)</h3>
+    <h3>Results - LSTM (Test 2024)</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Target</th><th>Train Time</th><th>Train R²</th><th>Test R²</th><th>RMSE</th><th>MAE</th><th>F1</th></tr></thead>
@@ -390,7 +390,7 @@
       </table>
     </div>
 
-    <h4>AQI — LSTM</h4>
+    <h4>AQI - LSTM</h4>
     <div class="graphs three">
       <figure>
         <img loading="lazy" src="https://raw.githubusercontent.com/JayUT10/Air-Quality-Prediction-using-LSTM-and-Regression/master/outputs/lstm/AQI/training_history.png" alt="AQI LSTM training history">
@@ -429,9 +429,9 @@
     <div class="verdict">
       <p><strong>Linear Regression outperforms LSTM on all 7 targets</strong> for this dataset. The primary reasons:</p>
       <ol>
-        <li><strong>TARGET_lag1 feature</strong> — Linear Regression explicitly uses yesterday's value, giving it a strong autocorrelation advantage.</li>
-        <li><strong>Distribution shift</strong> — SO2 and NO2 in 2024 are at systematically different levels than 2021–2023. Linear Regression with the lag feature tracks the actual trend; the LSTM struggles to generalise across this shift within a 14-day window.</li>
-        <li><strong>Dataset size</strong> — 1080 training rows is small for deep learning; the LSTM needs more data to fully outperform linear models.</li>
+        <li><strong>TARGET_lag1 feature</strong> - Linear Regression explicitly uses yesterday's value, giving it a strong autocorrelation advantage.</li>
+        <li><strong>Distribution shift</strong> - SO2 and NO2 in 2024 are at systematically different levels than 2021–2023. Linear Regression with the lag feature tracks the actual trend; the LSTM struggles to generalise across this shift within a 14-day window.</li>
+        <li><strong>Dataset size</strong> - 1080 training rows is small for deep learning; the LSTM needs more data to fully outperform linear models.</li>
       </ol>
     </div>
   </section>
@@ -476,15 +476,15 @@
   <!-- 7. HOW TO RUN -->
   <section class="block">
     <h2><span class="n">07</span> How to Run</h2>
-    <pre><code># Step 1 — Preprocess
+    <pre><code># Step 1 - Preprocess
 python preprocessing/preprocess_csv.py
 
-# Step 2 — Linear Regression (per target)
+# Step 2 - Linear Regression (per target)
 python models/regression/linear/linear_AQI.py
 python models/regression/linear/linear_PM25.py
 # … PM10, NO2, SO2, CO, Ozone
 
-# Step 3 — LSTM (per target, GPU recommended)
+# Step 3 - LSTM (per target, GPU recommended)
 python models/lstm/lstm_AQI.py
 python models/lstm/lstm_PM25.py
 # … PM10, NO2, SO2, CO, Ozone</code></pre>

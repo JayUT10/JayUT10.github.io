@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Bird Species Recognition — Jay Trivedi</title>
+  <title>Live Bird Species Recognition - Jay Trivedi</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -168,9 +168,9 @@
 </div>
 
 <main>
-  <div class="eyebrow">Project 02 — README</div>
+  <div class="eyebrow">Project 02 - README</div>
   <h1 class="title">Live Bird Species<br>Recognition</h1>
-  <p class="lead">A deep learning pipeline that classifies 10 bird species from audio recordings using raw decibel (dB) mel spectrograms and a lightweight TinyML CNN — with a real-time GUI that listens to your microphone and predicts live.</p>
+  <p class="lead">A deep learning pipeline that classifies 10 bird species from audio recordings using raw decibel (dB) mel spectrograms and a lightweight TinyML CNN with a real-time GUI that listens to your microphone and predicts live.</p>
   <div class="meta-chips">
     <span class="chip">PyTorch</span>
     <span class="chip">TinyML CNN</span>
@@ -224,7 +224,7 @@
       </table>
     </div>
 
-    <h4>Raw dB Mel Spectrograms — All 10 Species</h4>
+    <h4>Raw dB Mel Spectrograms - All 10 Species</h4>
     <div class="graphs one">
       <figure>
         <img loading="lazy" src="https://github.com/JayUT10/Live-Bird-Species-Recognition-System/raw/master/images/spectrogram_comparison.png" alt="Mel spectrogram comparison across 10 species">
@@ -238,15 +238,15 @@
   <!-- 2. PREPROCESSING -->
   <section class="block">
     <h2><span class="n">02</span> Preprocessing Pipeline</h2>
-    <p class="section-intro">Each audio file passes through a 9-step pipeline (<code>preprocess_db.py</code>) — from loading and resampling to voice-activity detection and conversion to a raw-dB mel spectrogram.</p>
+    <p class="section-intro">Each audio file passes through a 9-step pipeline (<code>preprocess_db.py</code>) - from loading and resampling to voice-activity detection and conversion to a raw-dB mel spectrogram.</p>
     <ol>
       <li>Load with librosa at native sample rate.</li>
-      <li>Validate sample rate (8,000–48,000 Hz) — skip if invalid.</li>
+      <li>Validate sample rate (8,000–48,000 Hz) - skip if invalid.</li>
       <li>Resample to 22,050 Hz.</li>
       <li>Normalize amplitude.</li>
       <li>Remove DC offset (subtract mean).</li>
       <li>Pre-emphasis filter (coefficient 0.97).</li>
-      <li>Voice Activity Detection — 20 ms frames, RMS threshold 1e-4; silent frames discarded.</li>
+      <li>Voice Activity Detection - 20 ms frames, RMS threshold 1e-4; silent frames discarded.</li>
       <li>Chunk into 5-second segments (zero-pad the last chunk).</li>
       <li>Mel spectrogram → power-to-dB; output shape <code>(1, 128, 216)</code>.</li>
     </ol>
@@ -274,18 +274,18 @@
   <!-- 3. CLEANING -->
   <section class="block">
     <h2><span class="n">03</span> Spectrogram Cleaning</h2>
-    <p class="section-intro">Three cascaded passes plus a second-half silence check (<code>clean_db.py</code>) remove silent or low-energy chunks. Pass 2 uses AND logic across three increasingly strict sub-passes — a chunk is removed only if all three conditions are met.</p>
+    <p class="section-intro">Three cascaded passes plus a second-half silence check (<code>clean_db.py</code>) remove silent or low-energy chunks. Pass 2 uses AND logic across three increasingly strict sub-passes - a chunk is removed only if all three conditions are met.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Pass</th><th>Removed</th><th>Reason</th></tr></thead>
         <tbody>
           <tr><td>Pass 1</td><td>3,096</td><td>3+ seconds continuous silence</td></tr>
-          <tr><td>Pass 2 — Sub-A</td><td>1,215</td><td>Very low energy (mean/max/ratio)</td></tr>
-          <tr><td>Pass 2 — Sub-B</td><td>458</td><td>Low energy (moderate threshold)</td></tr>
-          <tr><td>Pass 2 — Sub-C</td><td>948</td><td>Marginal energy</td></tr>
+          <tr><td>Pass 2 - Sub-A</td><td>1,215</td><td>Very low energy (mean/max/ratio)</td></tr>
+          <tr><td>Pass 2 - Sub-B</td><td>458</td><td>Low energy (moderate threshold)</td></tr>
+          <tr><td>Pass 2 - Sub-C</td><td>948</td><td>Marginal energy</td></tr>
           <tr><td>Pass 3</td><td>46,984</td><td>Second half silent (&lt; 12 dB)</td></tr>
-          <tr><td class="best">Total Removed</td><td class="best">52,701 (68.8%)</td><td>—</td></tr>
-          <tr><td class="best">Kept</td><td class="best">23,899 (31.2%)</td><td>—</td></tr>
+          <tr><td class="best">Total Removed</td><td class="best">52,701 (68.8%)</td><td>-</td></tr>
+          <tr><td class="best">Kept</td><td class="best">23,899 (31.2%)</td><td>-</td></tr>
         </tbody>
       </table>
     </div>
@@ -296,7 +296,7 @@
   <!-- 4. AUGMENTATION -->
   <section class="block">
     <h2><span class="n">04</span> Data Augmentation</h2>
-    <p class="section-intro">Five species had fewer than 1,500 clean chunks. Synthetic augmentation (<code>augment.py</code>) brought each up to a 1,500-chunk target — adding 2,988 chunks total. Augmented chunks are used <strong>only in training</strong>, never in validation or test.</p>
+    <p class="section-intro">Five species had fewer than 1,500 clean chunks. Synthetic augmentation (<code>augment.py</code>) brought each up to a 1,500-chunk target - adding 2,988 chunks total. Augmented chunks are used <strong>only in training</strong>, never in validation or test.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Species</th><th>Before</th><th>After</th><th>Added</th></tr></thead>
@@ -306,7 +306,7 @@
           <tr><td>Marsh Wren</td><td>865</td><td>1,500</td><td>+635</td></tr>
           <tr><td>Northern Raven</td><td>1,226</td><td>1,500</td><td>+274</td></tr>
           <tr><td>Grey Catbird</td><td>1,396</td><td>1,500</td><td>+104</td></tr>
-          <tr><td class="best">Total Added</td><td>—</td><td>—</td><td class="best">+2,988</td></tr>
+          <tr><td class="best">Total Added</td><td>-</td><td>-</td><td class="best">+2,988</td></tr>
         </tbody>
       </table>
     </div>
@@ -318,17 +318,17 @@
   <!-- 5. MODEL -->
   <section class="block">
     <h2><span class="n">05</span> Model Architecture</h2>
-    <p class="section-intro"><strong>BirdTinyML</strong> — a lightweight CNN with <strong>2,619,882 parameters</strong> (<code>model_db.py</code>). Four convolutional blocks with batch norm, adaptive average pooling, and two dropout-regularized fully connected layers.</p>
+    <p class="section-intro"><strong>BirdTinyML</strong> - a lightweight CNN with <strong>2,619,882 parameters</strong> (<code>model_db.py</code>). Four convolutional blocks with batch norm, adaptive average pooling, and two dropout-regularized fully connected layers.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Layer</th><th>Type</th><th>Output Shape</th></tr></thead>
         <tbody>
-          <tr><td>Input</td><td>—</td><td>(1, 128, 216)</td></tr>
+          <tr><td>Input</td><td>-</td><td>(1, 128, 216)</td></tr>
           <tr><td>Block 1</td><td>Conv2D + BN + ReLU + MaxPool</td><td>(32, 64, 108)</td></tr>
           <tr><td>Block 2</td><td>Conv2D + BN + ReLU + MaxPool</td><td>(64, 32, 54)</td></tr>
           <tr><td>Block 3</td><td>Conv2D + BN + ReLU + MaxPool</td><td>(128, 16, 27)</td></tr>
           <tr><td>Block 4</td><td>Conv2D + BN + ReLU</td><td>(256, 16, 27)</td></tr>
-          <tr><td>AdaptiveAvgPool</td><td>—</td><td>(256, 4, 4)</td></tr>
+          <tr><td>AdaptiveAvgPool</td><td>-</td><td>(256, 4, 4)</td></tr>
           <tr><td>FC + ReLU + Dropout</td><td>Dropout 0.5</td><td>512</td></tr>
           <tr><td>FC + ReLU + Dropout</td><td>Dropout 0.5</td><td>256</td></tr>
           <tr><td>FC (Output)</td><td>Softmax</td><td>10</td></tr>
@@ -427,7 +427,7 @@
   <!-- 7. LIVE GUI -->
   <section class="block">
     <h2><span class="n">07</span> Live GUI</h2>
-    <p class="section-intro">The interactive GUI (<code>gui_inference.py</code>) streams your microphone continuously and updates predictions every second — with a live mel spectrogram, per-species confidence bars, and the top prediction highlighted in gold.</p>
+    <p class="section-intro">The interactive GUI (<code>gui_inference.py</code>) streams your microphone continuously and updates predictions every second - with a live mel spectrogram, per-species confidence bars, and the top prediction highlighted in gold.</p>
     <div class="graphs one">
       <figure>
         <img loading="lazy" src="https://github.com/JayUT10/Live-Bird-Species-Recognition-System/raw/master/images/gui_screenshot.png" alt="Live GUI screenshot">
@@ -435,10 +435,10 @@
       </figure>
     </div>
     <ul class="plain">
-      <li><strong>Load Audio File</strong> — classify any .mp3, .wav, .flac, or .ogg file.</li>
-      <li><strong>Start Live</strong> — stream microphone; predictions update every second.</li>
-      <li><strong>Species Panel</strong> — all 10 species with color dots and live confidence %.</li>
-      <li><strong>Mel Spectrogram</strong> — live-updating display alongside confidence bars.</li>
+      <li><strong>Load Audio File</strong> - classify any .mp3, .wav, .flac, or .ogg file.</li>
+      <li><strong>Start Live</strong> - stream microphone; predictions update every second.</li>
+      <li><strong>Species Panel</strong> - all 10 species with color dots and live confidence %.</li>
+      <li><strong>Mel Spectrogram</strong> - live-updating display alongside confidence bars.</li>
     </ul>
   </section>
 
@@ -447,20 +447,20 @@
   <!-- 8. HOW TO RUN -->
   <section class="block">
     <h2><span class="n">08</span> How to Run</h2>
-    <pre><code># Step 1 — Preprocess audio → raw dB .npy chunks
+    <pre><code># Step 1 - Preprocess audio → raw dB .npy chunks
 python preprocess_db.py
 
-# Step 2 — Clean spectrograms (3-pass)
+# Step 2 - Clean spectrograms (3-pass)
 python clean_db.py
 
-# Step 3 — Augment underrepresented species
+# Step 3 - Augment underrepresented species
 python augment.py
 
-# Step 4 — Train model + generate graphs
+# Step 4 - Train model + generate graphs
 python train_db.py
 # → checkpoints_db/best_model_db.pth (87.73% accuracy)
 
-# Step 5 — Live testing
+# Step 5 - Live testing
 python gui_inference.py                       # GUI (recommended)
 python inference.py --file path/to/bird.mp3   # file
 python inference.py --mic --duration 5        # microphone</code></pre>
